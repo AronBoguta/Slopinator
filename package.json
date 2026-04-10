@@ -1,0 +1,20 @@
+{
+  "name": "slopinator",
+  "version": "0.1.0",
+  "description": "High-performance log file browser — WebAssembly powered",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "wasm:build": "cd src-wasm && wasm-pack build --target web --out-dir ../src/wasm-pkg",
+    "wasm:build:release": "cd src-wasm && wasm-pack build --target web --release --out-dir ../src/wasm-pkg",
+    "full-build": "npm run wasm:build && npm run build"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0",
+    "vite-plugin-wasm": "^3.4.1",
+    "vite-plugin-top-level-await": "^1.4.4"
+  }
+}

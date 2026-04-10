@@ -1,0 +1,15 @@
+﻿[2025-01-01 00:00:01] INFO | User login successful | rid=12345
+[2025-01-01 00:00:02] ERROR | Connection pool exhausted | rid=12346
+[2025-01-01 00:00:03] DEBUG | Cache miss for key=user_session | rid=12347
+[2025-01-01 00:00:04] WARN | Memory usage at 85% | rid=12348
+[2025-01-01 00:00:05] TRACE | Database query completed | rid=12349
+[2025-01-01 00:00:06] FATAL | Disk write latency 450ms | rid=12350
+[2025-01-01 00:00:07] ERR | Authentication token expired | rid=12351
+[2025-01-01 00:00:08] WRN | API rate limit exceeded | rid=12352
+[2025-01-01 00:00:09] DBG | GC pause 120ms | rid=12353
+[2025-01-01 00:00:10] TRC | File not found: config.yaml | rid=12354
+[2025-01-01 00:00:11] CRITICAL | Request timeout after 30s | rid=12355
+[2025-01-01 00:00:12] WARNING | SSL certificate expires in 7 days | rid=12356
+[2025-01-01 00:00:13] NOTICE | Batch job completed: 1500 records | rid=12357
+[2025-01-01 00:00:14] VERBOSE | Thread pool utilization 92% | rid=12358
+[2025-01-01 00:00:15] INF | WebSocket connection closed | rid=12359

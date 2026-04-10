@@ -1,0 +1,1 @@
+C:\antigrav\Slopinator\src-wasm\target\wasm32-unknown-unknown\release\slopinator_wasm.wasm: C:\antigrav\Slopinator\src-wasm\src\chunk_cache.rs C:\antigrav\Slopinator\src-wasm\src\lib.rs C:\antigrav\Slopinator\src-wasm\src\line_index.rs C:\antigrav\Slopinator\src-wasm\src\search.rs
