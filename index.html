@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Slopinator — High-performance log file browser for files up to 2 GB. Built with WebAssembly for near-native speed.">
+    <title>Slopinator — Log File Browser</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="/assets/index-Cj43wMZJ.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-BudopPOR.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Top Bar -->
+        <header id="toolbar">
+            <div class="toolbar-left">
+                <div class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M7 8h10M7 12h7M7 16h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    <span>Slopinator</span>
+                </div>
+                <button id="btn-open" class="toolbar-btn" title="Open file (Ctrl+O)">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 13h12M3 3h4l1.5 2H13v5H3V3z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+                    <span>Open</span>
+                </button>
+            </div>
+            <div class="toolbar-center">
+                <div id="search-bar" class="search-bar">
+                    <svg class="search-icon" width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.2"/><path d="M9 9l4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                    <input type="text" id="search-input" placeholder="Search in file… (Ctrl+F)" autocomplete="off" spellcheck="false">
+                    <div id="search-info" class="search-info"></div>
+                    <button id="btn-case" class="search-toggle" title="Match Case">Aa</button>
+                    <button id="btn-prev-match" class="search-nav" title="Previous match (Shift+Enter)">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 8l4-4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <button id="btn-next-match" class="search-nav" title="Next match (Enter)">
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 4l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                </div>
+            </div>
+            <div class="toolbar-right">
+                <button id="btn-goto" class="toolbar-btn" title="Go to line (Ctrl+G)">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 2v12M8 2v12M12 2v12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                    <span>Go to</span>
+                </button>
+                <button id="btn-theme" class="theme-toggle" title="Toggle theme">
+                    <svg class="icon-sun" width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.3"/><path d="M8 1.5v1.5M8 13v1.5M1.5 8H3M13 8h1.5M3.4 3.4l1 1M11.6 11.6l1 1M3.4 12.6l1-1M11.6 4.4l1-1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                    <svg class="icon-moon" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13.5 9.5A5.5 5.5 0 016.5 2.5 5.5 5.5 0 108 14a5.5 5.5 0 005.5-4.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Search timing toast -->
+        <div id="search-toast" class="search-toast hidden">
+            <span id="search-toast-text"></span>
+        </div>
+
+        <!-- Drop zone overlay -->
+        <div id="drop-zone" class="drop-zone hidden">
+            <div class="drop-zone-content">
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none"><rect x="8" y="8" width="48" height="48" rx="8" stroke="currentColor" stroke-width="2" stroke-dasharray="6 4"/><path d="M32 20v24M20 32h24" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                <p>Drop your log file here</p>
+                <span>Supports files up to 2 GB</span>
+            </div>
+        </div>
+
+        <!-- Welcome screen -->
+        <div id="welcome" class="welcome">
+            <div class="welcome-content">
+                <div class="welcome-icon">
+                    <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="10" y="10" width="60" height="60" rx="12" stroke="url(#grad1)" stroke-width="2"/>
+                        <path d="M24 28h32M24 40h24M24 52h32" stroke="url(#grad1)" stroke-width="2" stroke-linecap="round"/>
+                        <defs><linearGradient id="grad1" x1="10" y1="10" x2="70" y2="70"><stop stop-color="#818cf8"/><stop offset="1" stop-color="#c084fc"/></linearGradient></defs>
+                    </svg>
+                </div>
+                <h1>Slopinator</h1>
+                <p class="welcome-subtitle">High-performance log file browser</p>
+                <p class="welcome-desc">Open log files up to 2 GB with near-instant loading, smooth scrolling, and blazing-fast search — powered by WebAssembly.</p>
+                <div class="welcome-actions">
+                    <button id="btn-open-welcome" class="btn-primary">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 15h14M3 3h5l1.5 2H15v6H3V3z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                        Open File
+                    </button>
+                    <span class="welcome-hint">or drag & drop anywhere</span>
+                </div>
+                <div class="welcome-features">
+                    <div class="feature">
+                        <div class="feature-icon">⚡</div>
+                        <div class="feature-text">
+                            <strong>Instant Load</strong>
+                            <span>Chunk-based reading, never loads full file</span>
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">🔍</div>
+                        <div class="feature-text">
+                            <strong>Fast Search</strong>
+                            <span>WASM-powered pattern matching</span>
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-text">
+                            <strong>Virtual Scroll</strong>
+                            <span>Millions of lines, smooth as butter</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Log viewer -->
+        <main id="viewer" class="viewer hidden">
+            <!-- Search results sidebar -->
+            <aside id="search-panel" class="search-panel hidden">
+                <div class="search-panel-header">
+                    <span class="search-panel-title">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" stroke-width="1.2"/><path d="M9 9l4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+                        Results
+                    </span>
+                    <span id="search-panel-count" class="search-panel-count"></span>
+                    <button id="search-panel-close" class="search-panel-close" title="Close panel">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 3l8 8M11 3l-8 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+                    </button>
+                </div>
+                <div id="search-panel-list" class="search-panel-list"></div>
+            </aside>
+            <div id="gutter" class="gutter"></div>
+            <div id="scroll-container" class="scroll-container">
+                <div id="scroll-spacer" class="scroll-spacer"></div>
+                <div id="line-container" class="line-container"></div>
+            </div>
+        </main>
+
+        <!-- Status bar -->
+        <footer id="status-bar" class="status-bar">
+            <div class="status-left">
+                <span id="status-file" class="status-item">No file loaded</span>
+                <span id="status-size" class="status-item"></span>
+            </div>
+            <div class="status-center">
+                <div id="index-progress" class="index-progress hidden">
+                    <div id="index-progress-bar" class="index-progress-bar"></div>
+                    <span id="index-progress-text">Indexing…</span>
+                </div>
+            </div>
+            <div class="status-right">
+                <span id="status-lines" class="status-item"></span>
+                <span id="status-cursor" class="status-item"></span>
+                <span id="status-memory" class="status-item"></span>
+                <span id="status-engine" class="status-item wasm-badge">WASM</span>
+            </div>
+        </footer>
+
+        <!-- Go-to-line dialog -->
+        <div id="goto-dialog" class="dialog-overlay hidden">
+            <div class="dialog">
+                <label for="goto-input">Go to line:</label>
+                <input type="number" id="goto-input" min="1" placeholder="Line number">
+                <div class="dialog-actions">
+                    <button id="goto-cancel" class="btn-secondary">Cancel</button>
+                    <button id="goto-go" class="btn-primary">Go</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
